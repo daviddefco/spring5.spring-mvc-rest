@@ -12,6 +12,10 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'net.ltgt.apt' version '0.9'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -21,18 +25,35 @@ group = 'com.daviddefco.codesamples'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
+
 repositories {
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
 }
 
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.2'
+}
+
+ext {
+	mapstructVersion = "1.2.0.Final"
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile("org.mapstruct:mapstruct-jdk8:${mapstructVersion}")
+	apt "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs = [
+		'-Amapstruct.suppressGeneratorTimestamp=true',
+		'-Amapstruct.defaultComponentModel=spring'
+	]
 }
