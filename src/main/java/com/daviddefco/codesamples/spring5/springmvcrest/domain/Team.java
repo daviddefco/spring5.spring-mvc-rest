@@ -7,15 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
 @Data
-public class Player {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Entity
+public class Team {
+
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String name;
-    private String position;
-    private Integer number;
-    private Integer experience;
-    private Integer weight;
-    private String height;
+    private String arena;
+    private int founded;
 }
