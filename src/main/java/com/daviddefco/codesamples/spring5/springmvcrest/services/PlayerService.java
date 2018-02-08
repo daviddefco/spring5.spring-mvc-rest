@@ -8,4 +8,5 @@ import java.util.List;
 public interface PlayerService {
     PlayerListDto findAllPlayers();
     PlayerDto findPlayerByName(String playerName);
+    PlayerListDto findPlayersFromTeam(Long teamId);
 }

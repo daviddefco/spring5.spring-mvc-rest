@@ -33,4 +33,12 @@ public class PlayerController {
             HttpStatus.OK
         );
     }
+
+    @GetMapping("teams/{teamId}")
+    public ResponseEntity<PlayerListDto> getPlayersOfTeam(@PathVariable String teamId) {
+        return new ResponseEntity<>(
+            playerService.findPlayersFromTeam(Long.valueOf(teamId)),
+            HttpStatus.OK
+        );
+    }
 }

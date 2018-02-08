@@ -2,7 +2,6 @@ package com.daviddefco.codesamples.spring5.springmvcrest.controllers.v1;
 
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
-import com.daviddefco.codesamples.spring5.springmvcrest.domain.Player;
 import com.daviddefco.codesamples.spring5.springmvcrest.services.PlayerService;
 import org.junit.Before;
 import org.junit.Test;

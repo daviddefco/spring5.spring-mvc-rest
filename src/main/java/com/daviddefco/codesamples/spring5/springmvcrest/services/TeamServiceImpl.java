@@ -5,10 +5,12 @@ import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.TeamDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.TeamListDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class TeamServiceImpl implements TeamService {
 
     @Autowired
@@ -25,6 +27,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamListDto findAllTeamsFoundedAfter(Integer foundationYear) {
-        return null;
+        List<TeamDto> teamDtoList = new ArrayList<>();
+        teamRepository.findByFoundedGreaterThan(foundationYear).forEach(team -> {
+            teamDtoList.add(TeamMapper.INSTANCE.teamToTeamDto(team));
+        });
+        return new TeamListDto(teamDtoList);
     }
 }

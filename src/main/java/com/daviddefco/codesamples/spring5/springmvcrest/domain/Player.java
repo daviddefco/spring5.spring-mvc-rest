@@ -2,10 +2,7 @@ package com.daviddefco.codesamples.spring5.springmvcrest.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -18,4 +15,6 @@ public class Player {
     private Integer experience;
     private Integer weight;
     private String height;
+    @ManyToOne
+    private Team playsFor;
 }

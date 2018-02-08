@@ -35,4 +35,15 @@ public class PlayerServiceImpl implements PlayerService {
             playerRepository.findByName(playerName)
         );
     }
+
+    @Override
+    public PlayerListDto findPlayersFromTeam(Long teamId) {
+        List<PlayerDto> players = new ArrayList<>();
+        playerRepository.findAll().forEach(player-> {
+            if (player.getPlaysFor().getId().equals(teamId)) {
+                players.add(PlayerMapper.INSTANCE.playerToPlayerDto(player));
+            }
+        });
+        return new PlayerListDto(players);
+    }
 }

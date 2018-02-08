@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 
 public class TeamServiceTests {
 
+    public static final int FOUNDED_1949 = 1949;
+    public static final int FOUNDED_1950 = 1950;
     @InjectMocks
     TeamServiceImpl teamService;
 
@@ -41,5 +43,19 @@ public class TeamServiceTests {
 
         // then
         assertEquals(2, teamDtoList.getTeams().size());
+    }
+
+    @Test
+    public void findAllTeamsFoundedAfterTest() {
+
+        // given
+        List<Team> teamList = Arrays.asList(new Team(), new Team());
+        when(teamRepository.findByFoundedGreaterThan(FOUNDED_1950)).thenReturn(teamList);
+
+        // when
+        TeamListDto teamListDto = teamService.findAllTeamsFoundedAfter(FOUNDED_1950);
+
+        // then
+        assertEquals(2, teamListDto.getTeams().size());
     }
 }
