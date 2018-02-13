@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/players/")
 public class PlayerController {
 
@@ -20,61 +20,50 @@ public class PlayerController {
     private PlayerService playerService;
 
     @GetMapping
-    public ResponseEntity<PlayerListDto> getAllPlayers() {
-        return new ResponseEntity<>(
-            playerService.findAllPlayers(),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public PlayerListDto getAllPlayers() {
+        return playerService.findAllPlayers();
     }
 
     @GetMapping("query")
-    public ResponseEntity<PlayerDto> getPlayerByName(@RequestAttribute("name") String playerName) {
-        return new ResponseEntity<>(
-            playerService.findPlayerByName(playerName),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public PlayerDto getPlayerByName(@RequestAttribute("name") String playerName) {
+        return playerService.findPlayerByName(playerName);
     }
 
     @GetMapping("/{playerId}")
-    public ResponseEntity<PlayerDto> getPlayerById(@PathVariable String playerId) {
-        return new ResponseEntity<>(
-            playerService.findPlayerById(Long.valueOf(playerId)),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public PlayerDto getPlayerById(@PathVariable String playerId) {
+        return playerService.findPlayerById(Long.valueOf(playerId));
     }
 
     @GetMapping("teams/{teamId}")
-    public ResponseEntity<PlayerListDto> getPlayersOfTeam(@PathVariable String teamId) {
-        return new ResponseEntity<>(
-            playerService.findPlayersFromTeam(Long.valueOf(teamId)),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public PlayerListDto getPlayersOfTeam(@PathVariable String teamId) {
+        return playerService.findPlayersFromTeam(Long.valueOf(teamId));
     }
 
     @PostMapping
-    public ResponseEntity<PlayerDto> savePlayer(@RequestBody PlayerDto player) {
-        return new ResponseEntity<>(
-            playerService.savePlayer(player),
-            HttpStatus.CREATED
-        );
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlayerDto savePlayer(@RequestBody PlayerDto player) {
+        return playerService.savePlayer(player);
     }
 
     @PutMapping("{playerId}")
-    public ResponseEntity<PlayerDto> updatePlayer(
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public PlayerDto updatePlayer(
         @PathVariable String playerId,
         @RequestBody PlayerDto player
     ){
         player.setId(Long.valueOf(playerId));
-        return new ResponseEntity<>(
-            playerService.updatePlayer(player),
-            HttpStatus.ACCEPTED
-        );
+        return playerService.updatePlayer(player);
     }
 
     @DeleteMapping("{playerId}")
-    public ResponseEntity<String> deletePlayer(@PathVariable String playerId) {
+    @ResponseStatus(HttpStatus.OK)
+    public String deletePlayer(@PathVariable String playerId) {
         playerService.deletePlayer(Long.valueOf(playerId));
-        return new ResponseEntity<>(EMPTY_RESPONSE, HttpStatus.OK);
+        return EMPTY_RESPONSE;
     }
 
 }

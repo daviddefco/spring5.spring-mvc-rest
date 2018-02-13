@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/teams/")
 public class TeamController {
 
@@ -17,18 +19,14 @@ public class TeamController {
     private TeamService teamService;
 
     @RequestMapping
-    public ResponseEntity<TeamListDto> getAllTeams() {
-        return new ResponseEntity<>(
-            teamService.findAllTeams(),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public TeamListDto getAllTeams() {
+        return teamService.findAllTeams();
     }
 
     @RequestMapping("{foundationYear}")
-    public ResponseEntity<TeamListDto> getAllTeamsFoundedAfter(@PathVariable String foundationYear) {
-        return new ResponseEntity<>(
-            teamService.findAllTeamsFoundedAfter(Integer.valueOf(foundationYear)),
-            HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public TeamListDto getAllTeamsFoundedAfter(@PathVariable String foundationYear) {
+        return teamService.findAllTeamsFoundedAfter(Integer.valueOf(foundationYear));
     }
 }
