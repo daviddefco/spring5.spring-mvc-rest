@@ -8,7 +8,7 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-public class PlayerMapperTests {
+public class PlayerToPlayerDtoMapperTests {
 
     public static final String PLAYER_NAME = "Brandom Ingram";
 

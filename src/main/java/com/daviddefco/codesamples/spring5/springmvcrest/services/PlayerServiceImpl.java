@@ -1,13 +1,16 @@
 package com.daviddefco.codesamples.spring5.springmvcrest.services;
 
+import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.mapper.PlayerDtoMapper;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.mapper.PlayerMapper;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
+import com.daviddefco.codesamples.spring5.springmvcrest.domain.Player;
 import com.daviddefco.codesamples.spring5.springmvcrest.repositories.PlayerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -45,5 +48,32 @@ public class PlayerServiceImpl implements PlayerService {
             }
         });
         return new PlayerListDto(players);
+    }
+
+    @Override
+    public PlayerDto savePlayer(PlayerDto newPlayer) {
+        return PlayerMapper.INSTANCE.playerToPlayerDto(
+            playerRepository.save(PlayerDtoMapper.INSTANCE.playerDtoToPlayer(newPlayer))
+        );
+    }
+
+    @Override
+    public PlayerDto updatePlayer(PlayerDto updatedPlayer) {
+        return PlayerMapper.INSTANCE.playerToPlayerDto(
+            playerRepository.save(PlayerDtoMapper.INSTANCE.playerDtoToPlayer(updatedPlayer))
+        );
+    }
+
+    @Override
+    public Optional<PlayerDto> findPlayerById(Long playerId) {
+        Optional<Player> player  = playerRepository.findById(playerId);
+        return player.isPresent() ?
+            Optional.of(PlayerMapper.INSTANCE.playerToPlayerDto(player.get()))
+            : Optional.empty();
+    }
+
+    @Override
+    public void deletePlayer(Long id) {
+        playerRepository.deleteById(id);
     }
 }

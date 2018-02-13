@@ -15,5 +15,6 @@ public interface PlayerMapper {
     @Mapping(source = "position", target="positionPlayed")
     @Mapping(source = "number", target="jerseyNumber")
 
+
     PlayerDto playerToPlayerDto(Player player);
 }

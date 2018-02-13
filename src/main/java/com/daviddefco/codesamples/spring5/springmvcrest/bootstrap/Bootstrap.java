@@ -27,6 +27,9 @@ public class Bootstrap implements CommandLineRunner {
         Team lac = new Team();
         lac.setName("Los Angeles Clippers");
 
+        Team cav = new Team();
+        cav.setName("Cleveland Cavaliers");
+
         Player williams = new Player();
         williams.setName("Lou Williams");
         williams.setPlaysFor(lac);
@@ -49,6 +52,7 @@ public class Bootstrap implements CommandLineRunner {
 
         teamRepository.save(lal);
         teamRepository.save(lac);
+        teamRepository.save(cav);
         log.info(String.format("Loaded %d teams", teamRepository.count()));
 
         playerRepository.save(ingram);

@@ -3,6 +3,7 @@ package com.daviddefco.codesamples.spring5.springmvcrest.controllers.v1;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.services.PlayerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -14,11 +15,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +34,8 @@ public class PlayerControllerTests {
     public static final long PLAYER_ID = 6L;
     public static final String PLAYER_NAME = "Jordan Clarkson";
     public static final String API_V1_PLAYERS = "/api/v1/players/";
+    public static final String LEBRON_JAMES = "Lebron James";
+    public static final String KARL_ANTONY_TOWNS = "Karl Antony Towns";
 
     @Mock
     PlayerService playerService;
@@ -35,11 +44,13 @@ public class PlayerControllerTests {
     PlayerController playerController;
 
     MockMvc mockMvc;
+    ObjectMapper jsonMapper;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(playerController).build();
+        jsonMapper = new ObjectMapper();
     }
 
     @Test
@@ -64,10 +75,71 @@ public class PlayerControllerTests {
         when(playerService.findPlayerByName(PLAYER_NAME)).thenReturn(clarkson);
 
         // then
-        mockMvc.perform(get(API_V1_PLAYERS + PLAYER_NAME)
-            .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(API_V1_PLAYERS + "query")
+            .contentType(MediaType.APPLICATION_JSON)
+            .requestAttr("name", PLAYER_NAME))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name", equalTo(PLAYER_NAME)))
             .andExpect(jsonPath("$.id").value(PLAYER_ID));
+    }
+
+    @Test
+    public void playerByIdTest() throws Exception {
+        // given
+        PlayerDto kat = new PlayerDto();
+        kat.setName(KARL_ANTONY_TOWNS);
+        kat.setId(PLAYER_ID);
+        when(playerService.findPlayerById(PLAYER_ID)).thenReturn(Optional.of(kat));
+
+        //then
+        mockMvc.perform(get(API_V1_PLAYERS + PLAYER_ID)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", equalTo(KARL_ANTONY_TOWNS)))
+            .andExpect(jsonPath("$.id").value(PLAYER_ID));
+    }
+
+    @Test
+    public void createNewPlayerTest() throws Exception {
+
+        // given
+        PlayerDto lbj = new PlayerDto();
+        lbj.setName(LEBRON_JAMES);
+        when(playerService.savePlayer(any())).thenReturn(lbj);
+
+        // then
+        mockMvc.perform(post(API_V1_PLAYERS)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonMapper.writeValueAsString(lbj)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name", equalTo(LEBRON_JAMES)));
+
+    }
+
+    @Test
+    public void updatePlayerTest() throws Exception {
+
+        // given
+        PlayerDto lbj = new PlayerDto();
+        lbj.setName(LEBRON_JAMES);
+        when(playerService.updatePlayer(any())).thenReturn(lbj);
+
+        // then
+        mockMvc.perform(put(API_V1_PLAYERS + "/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonMapper.writeValueAsString(lbj)))
+            .andExpect(status().isAccepted())
+            .andExpect(jsonPath("$.name", equalTo(LEBRON_JAMES)));
+
+    }
+
+    @Test
+    public void deletePlayerTest() throws Exception {
+
+        // when - then
+        mockMvc.perform(delete(API_V1_PLAYERS + "/1")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
     }
 }

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TeamMapperTests {
+public class TeamToTeamDtoMapperTests {
 
     public static final String TEAM_NAME = "Los Angeles Lakers";
     public static final String ARENA = "Staples Center";
