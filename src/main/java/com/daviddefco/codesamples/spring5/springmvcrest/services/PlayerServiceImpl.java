@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.StreamSupport.stream;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -25,29 +29,24 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerListDto findAllPlayers() {
-        List<PlayerDto> players = new ArrayList<>();
-        playerRepository.findAll().forEach(player -> {
-            players.add(PlayerMapper.INSTANCE.playerToPlayerDto(player));
-        });
-        return new PlayerListDto(players);
+        return new PlayerListDto(stream(playerRepository.findAll().spliterator(), false)
+            .map(playerMapper::playerToPlayerDto)
+            .collect(Collectors.toList()));
     }
 
     @Override
     public PlayerDto findPlayerByName(String playerName) {
-        return PlayerMapper.INSTANCE.playerToPlayerDto(
-            playerRepository.findByName(playerName)
-        );
+        return playerRepository.findByName(playerName)
+            .map(playerMapper::playerToPlayerDto)
+            .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
     public PlayerListDto findPlayersFromTeam(Long teamId) {
-        List<PlayerDto> players = new ArrayList<>();
-        playerRepository.findAll().forEach(player-> {
-            if (player.getPlaysFor().getId().equals(teamId)) {
-                players.add(PlayerMapper.INSTANCE.playerToPlayerDto(player));
-            }
-        });
-        return new PlayerListDto(players);
+        return new PlayerListDto(stream(playerRepository.findAll().spliterator(), false)
+            .filter(player -> player.getPlaysFor().getId() == teamId)
+            .map(playerMapper::playerToPlayerDto)
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -65,11 +64,10 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Optional<PlayerDto> findPlayerById(Long playerId) {
-        Optional<Player> player  = playerRepository.findById(playerId);
-        return player.isPresent() ?
-            Optional.of(PlayerMapper.INSTANCE.playerToPlayerDto(player.get()))
-            : Optional.empty();
+    public PlayerDto findPlayerById(Long playerId) {
+        return playerRepository.findById(playerId)
+            .map(playerMapper::playerToPlayerDto)
+            .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override

@@ -13,6 +13,6 @@ public interface PlayerService {
     PlayerListDto findPlayersFromTeam(Long teamId);
     PlayerDto savePlayer(PlayerDto newPlayer);
     PlayerDto updatePlayer(PlayerDto updatedPlayer);
-    Optional<PlayerDto> findPlayerById(Long playerId);
+    PlayerDto findPlayerById(Long playerId);
     void deletePlayer(Long id);
 }

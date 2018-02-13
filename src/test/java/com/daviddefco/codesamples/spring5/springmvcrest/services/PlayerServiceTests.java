@@ -1,5 +1,6 @@
 package com.daviddefco.codesamples.spring5.springmvcrest.services;
 
+import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.mapper.PlayerMapper;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.domain.Player;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,6 +36,9 @@ public class PlayerServiceTests {
 
     @Mock
     PlayerRepository playerRepository;
+
+    @Mock
+    PlayerMapper playerMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -59,7 +64,8 @@ public class PlayerServiceTests {
         Player ingram = new Player();
         ingram.setId(PLAYER_ID);
         ingram.setName(PLAYER_NAME);
-        when(playerRepository.findByName(PLAYER_NAME)).thenReturn(ingram);
+        when(playerRepository.findByName(anyString())).thenReturn(Optional.of(ingram));
+        when(playerMapper.playerToPlayerDto(any())).thenReturn(PlayerMapper.INSTANCE.playerToPlayerDto(ingram));
 
         // when
         PlayerDto playerDto = playerService.findPlayerByName(PLAYER_NAME);
@@ -77,13 +83,13 @@ public class PlayerServiceTests {
         pg.setId(PLAYER_ID);
         pg.setName(PAUL_GEORGE);
         when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(pg));
+        when(playerMapper.playerToPlayerDto(any())).thenReturn(PlayerMapper.INSTANCE.playerToPlayerDto(pg));
 
         // when
-        Optional<PlayerDto> optionalPg = playerService.findPlayerById(PLAYER_ID);
+        PlayerDto pgDto = playerService.findPlayerById(PLAYER_ID);
 
         // then
-        assertTrue(optionalPg.isPresent());
-        assertEquals(PAUL_GEORGE, optionalPg.get().getName());
+        assertEquals(PAUL_GEORGE, pgDto.getName());
 
     }
 

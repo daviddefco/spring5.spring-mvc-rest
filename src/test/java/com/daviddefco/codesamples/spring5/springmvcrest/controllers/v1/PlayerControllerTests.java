@@ -2,7 +2,9 @@ package com.daviddefco.codesamples.spring5.springmvcrest.controllers.v1;
 
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
+import com.daviddefco.codesamples.spring5.springmvcrest.controllers.RestResponseEntityExceptionHandler;
 import com.daviddefco.codesamples.spring5.springmvcrest.services.PlayerService;
+import com.daviddefco.codesamples.spring5.springmvcrest.services.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -49,7 +54,10 @@ public class PlayerControllerTests {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(playerController).build();
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(playerController)
+            .setControllerAdvice(new RestResponseEntityExceptionHandler())
+            .build();
         jsonMapper = new ObjectMapper();
     }
 
@@ -84,12 +92,25 @@ public class PlayerControllerTests {
     }
 
     @Test
+    public void playerByNameNotFound() throws Exception {
+        // given
+        when(playerService.findPlayerByName(anyString())).thenThrow(new ResourceNotFoundException());
+
+        // then
+        mockMvc.perform(get(API_V1_PLAYERS + "query")
+            .contentType(MediaType.APPLICATION_JSON)
+            .requestAttr("name", PLAYER_NAME))
+            .andExpect(status().isNotFound());
+    }
+
+
+    @Test
     public void playerByIdTest() throws Exception {
         // given
         PlayerDto kat = new PlayerDto();
         kat.setName(KARL_ANTONY_TOWNS);
         kat.setId(PLAYER_ID);
-        when(playerService.findPlayerById(PLAYER_ID)).thenReturn(Optional.of(kat));
+        when(playerService.findPlayerById(PLAYER_ID)).thenReturn(kat);
 
         //then
         mockMvc.perform(get(API_V1_PLAYERS + PLAYER_ID)
@@ -97,6 +118,17 @@ public class PlayerControllerTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name", equalTo(KARL_ANTONY_TOWNS)))
             .andExpect(jsonPath("$.id").value(PLAYER_ID));
+    }
+
+    @Test
+    public void playerByIdNotFound() throws Exception {
+        // given
+        when(playerService.findPlayerById(anyLong())).thenThrow(new ResourceNotFoundException());
+
+        // then
+        mockMvc.perform(get(API_V1_PLAYERS + PLAYER_ID)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 
     @Test

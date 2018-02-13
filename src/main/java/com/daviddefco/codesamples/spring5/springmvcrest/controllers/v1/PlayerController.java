@@ -30,13 +30,13 @@ public class PlayerController {
     @GetMapping("query")
     public ResponseEntity<PlayerDto> getPlayerByName(@RequestAttribute("name") String playerName) {
         return new ResponseEntity<>(
-                playerService.findPlayerByName(playerName),
-                HttpStatus.OK
+            playerService.findPlayerByName(playerName),
+            HttpStatus.OK
         );
     }
 
     @GetMapping("/{playerId}")
-    public ResponseEntity<Optional<PlayerDto>> getPlayerById(@PathVariable String playerId) {
+    public ResponseEntity<PlayerDto> getPlayerById(@PathVariable String playerId) {
         return new ResponseEntity<>(
             playerService.findPlayerById(Long.valueOf(playerId)),
             HttpStatus.OK
