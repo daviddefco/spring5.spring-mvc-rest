@@ -3,6 +3,8 @@ package com.daviddefco.codesamples.spring5.springmvcrest.controllers.v1;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.api.v1.model.PlayerListDto;
 import com.daviddefco.codesamples.spring5.springmvcrest.services.PlayerService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Api(description = "Provides info related to NBA players.")
 @Controller
 @RequestMapping("/api/v1/players/")
 public class PlayerController {
@@ -19,6 +22,7 @@ public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
+    @ApiOperation(value = "Gets the complete list of NBA players", notes = "Some aditional notes")
     @GetMapping
     public ResponseEntity<PlayerListDto> getAllPlayers() {
         return new ResponseEntity<>(
