@@ -69,7 +69,8 @@ public class PlayerControllerTests {
 
         // then
         mockMvc.perform(get(API_V1_PLAYERS)
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.players", hasSize(2)));
     }
@@ -85,6 +86,7 @@ public class PlayerControllerTests {
         // then
         mockMvc.perform(get(API_V1_PLAYERS + "query")
             .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
             .requestAttr("name", PLAYER_NAME))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name", equalTo(PLAYER_NAME)))
@@ -99,6 +101,7 @@ public class PlayerControllerTests {
         // then
         mockMvc.perform(get(API_V1_PLAYERS + "query")
             .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
             .requestAttr("name", PLAYER_NAME))
             .andExpect(status().isNotFound());
     }
@@ -114,7 +117,8 @@ public class PlayerControllerTests {
 
         //then
         mockMvc.perform(get(API_V1_PLAYERS + PLAYER_ID)
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name", equalTo(KARL_ANTONY_TOWNS)))
             .andExpect(jsonPath("$.id").value(PLAYER_ID));
@@ -127,7 +131,8 @@ public class PlayerControllerTests {
 
         // then
         mockMvc.perform(get(API_V1_PLAYERS + PLAYER_ID)
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
 
@@ -142,7 +147,8 @@ public class PlayerControllerTests {
         // then
         mockMvc.perform(post(API_V1_PLAYERS)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonMapper.writeValueAsString(lbj)))
+            .content(jsonMapper.writeValueAsString(lbj))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name", equalTo(LEBRON_JAMES)));
 
@@ -159,7 +165,8 @@ public class PlayerControllerTests {
         // then
         mockMvc.perform(put(API_V1_PLAYERS + "/1")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonMapper.writeValueAsString(lbj)))
+            .content(jsonMapper.writeValueAsString(lbj))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isAccepted())
             .andExpect(jsonPath("$.name", equalTo(LEBRON_JAMES)));
 
@@ -170,7 +177,8 @@ public class PlayerControllerTests {
 
         // when - then
         mockMvc.perform(delete(API_V1_PLAYERS + "/1")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
 
     }

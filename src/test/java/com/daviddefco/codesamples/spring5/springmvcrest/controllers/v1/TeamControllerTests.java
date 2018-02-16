@@ -51,7 +51,8 @@ public class TeamControllerTests {
 
         // then
         mockMvc.perform(get(API_V1_TEAMS)
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.teams", hasSize(2)));
     }
@@ -74,7 +75,8 @@ public class TeamControllerTests {
 
         // then
         mockMvc.perform(get(API_V1_TEAMS + "1960")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.teams", hasSize(2)))
             .andExpect(jsonPath("$.teams[0].name", equalTo("Los Angeles Lakers")));
